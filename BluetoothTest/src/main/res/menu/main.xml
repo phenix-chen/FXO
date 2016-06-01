@@ -1,0 +1,41 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.centerm.fxo.bluetoothtest.MainActivity">
+
+    <item
+        android:id="@+id/action_connect"
+        android:orderInCategory="2"
+        android:title="Connect"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_disconnect"
+        android:orderInCategory="3"
+        android:title="Disconnect"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_command_a"
+        android:orderInCategory="4"
+        android:title="Command_A"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_command_w"
+        android:orderInCategory="5"
+        android:title="Command_W"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/show_stringbuffer"
+        android:orderInCategory="6"
+        android:title="Show_Stringbuffer"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_show_info"
+        android:orderInCategory="100"
+        android:title="Show Info"
+        app:showAsAction="never" />
+
+</menu>
