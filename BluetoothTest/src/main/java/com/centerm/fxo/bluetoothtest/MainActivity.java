@@ -29,8 +29,8 @@ public class MainActivity extends ActionBarActivity {
     private FXOManager manager;
 
     AlertDialog progressDialog;
-    MyDatabaseHelper dbHelper;
-    DatabaseContext databaseContext = new DatabaseContext(this);
+   // public MyDatabaseHelper dbHelper;
+    //public DatabaseContext databaseContext = new DatabaseContext(this);
     private Handler uiHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -40,8 +40,7 @@ public class MainActivity extends ActionBarActivity {
                     updateAcceleration(manager.data);
                     //ffmdetection(manager.data);
                     //SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-                    System.out.println(manager.data.get(RegClass.OUT_X_LSB) +
-                            manager.data.get(RegClass.OUT_Y_LSB) + manager.data.get(RegClass.OUT_Z_LSB));
+                    //System.out.println(manager.data.get(RegClass.OUT_X_LSB) + manager.data.get(RegClass.OUT_Y_LSB) + manager.data.get(RegClass.OUT_Z_LSB));
                     //insertData(dbHelper.getReadableDatabase(), manager.data.get(RegClass.OUT_X_LSB),
                     //        manager.data.get(RegClass.OUT_Y_LSB), manager.data.get(RegClass.OUT_Z_LSB), df.format(new Date()));
                     //Log.v("aaaaaa", "-------------------");
@@ -78,10 +77,9 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        dbHelper = new MyDatabaseHelper(databaseContext, "myDict3.db3",1);
+        //dbHelper = new MyDatabaseHelper(databaseContext, "myDict3.db3",1);
         Log.v(TAG,"------------------------create");
         manager = FXOManager.getInstance(uiHandler);
-
         initOutRegs();
         initOffRegs();
 
@@ -98,6 +96,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onRestart() {
         super.onRestart();
         manager.setUiHandler(uiHandler);
+
     }
 
     private void initOutRegs() {

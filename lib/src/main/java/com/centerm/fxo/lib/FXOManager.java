@@ -57,6 +57,7 @@ public class FXOManager implements OnReceiveDataListener, FXOService.OnConnectRe
     public void setUiHandler(Handler uiHandler) {
         this.uiHandler = uiHandler;
     }
+
     //连接芯片
     public void connectFXO(Context context) {
         Log.i(TAG, "Connect to FXO");
@@ -107,7 +108,9 @@ public class FXOManager implements OnReceiveDataListener, FXOService.OnConnectRe
     @Override
     public void onReceiveFXOData(Map<String, String> data) {
         this.data = data;
-        if (uiHandler != null) {
+        //System.out.println(data.get(RegClass.OUT_X_LSB) +
+          //      data.get(RegClass.OUT_Y_LSB) + data.get(RegClass.OUT_Z_LSB));
+         if (uiHandler != null) {
             uiHandler.obtainMessage(RECEIVE_DATA).sendToTarget();
             //Log.v(TAG, "sendToTarget");
         }
@@ -116,7 +119,7 @@ public class FXOManager implements OnReceiveDataListener, FXOService.OnConnectRe
     @Override
     public void onConnectSuccess() {
         /*作用：开启磁力计、加速度计混合开启使用模式；过采样率为标准采样率4倍；*/
-       write(RegClass.M_CTRL_REG1, "1F");
+       write(RegClass.M_CTRL_REG1, "1C");
         /*作用：设置磁力计数据每512个ODR后复位校准1次；*/
         write(RegClass.M_CTRL_REG2, "20");
         /*作用：加速计检测范围+/-8g；*/

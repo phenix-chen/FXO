@@ -1,2 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
+
+    <item
+        jar="/Users/Chen/Dropbox/开发/Android/FXO/BluetoothTest/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        revision="19.1.0"
+        sha1="20ac3da6c67f4fe0e944bbb0c3748f5b47d4da4e">
+        <dex dex="/Users/Chen/Dropbox/开发/Android/FXO/BluetoothTest/build/intermediates/pre-dexed/debug/instant-run_25918d25add535a2ce82c22222fc2da2bb597621.jar" />
+    </item>
+    <item
+        jar="/Users/Chen/Dropbox/开发/Android/FXO/BluetoothTest/build/intermediates/exploded-aar/com.android.support/support-v4/24.0.0-beta1/jars/libs/internal_impl-24.0.0-beta1.jar"
+        jumboMode="true"
+        revision="19.1.0"
+        sha1="23d564c059873f398dc5d967f56791a66472ce76">
+        <dex dex="/Users/Chen/Dropbox/开发/Android/FXO/BluetoothTest/build/intermediates/pre-dexed/debug/internal_impl-24.0.0-beta1_9a5a2673809f64e796a9f0e742f1c7328611cd86.jar" />
+    </item>
+    <item
+        jar="/Users/Chen/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/24.0.0-beta1/support-annotations-24.0.0-beta1.jar"
+        jumboMode="true"
+        revision="19.1.0"
+        sha1="04705c19cdec60364bc04e2e928c274da1ba301b">
+        <dex dex="/Users/Chen/Dropbox/开发/Android/FXO/BluetoothTest/build/intermediates/pre-dexed/debug/support-annotations-24.0.0-beta1_7ab38d48f11252a3466f90a5a4b7241ac1d6b589.jar" />
+    </item>
+    <item
+        jar="/Users/Chen/Dropbox/开发/Android/FXO/BluetoothTest/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="19.1.0"
+        sha1="0275d9c9157b93149279a676da287b3948147811">
+        <dex dex="/Users/Chen/Dropbox/开发/Android/FXO/BluetoothTest/build/intermediates/pre-dexed/debug/instant-run-bootstrap_213ec2bee2140f43c74a667115792a1ddae581c8.jar" />
+    </item>
+    <item
+        jar="/Users/Chen/Dropbox/开发/Android/FXO/BluetoothTest/build/intermediates/exploded-aar/com.android.support/gridlayout-v7/24.0.0-beta1/jars/classes.jar"
+        jumboMode="true"
+        revision="19.1.0"
+        sha1="ba97022c9cfce2813aa201216617b45980a5e938">
+        <dex dex="/Users/Chen/Dropbox/开发/Android/FXO/BluetoothTest/build/intermediates/pre-dexed/debug/com.android.support-gridlayout-v7-24.0.0-beta1_189de0c774e8a030e4cd8384e00517ca318241d9.jar" />
+    </item>
+    <item
+        jar="/Users/Chen/Dropbox/开发/Android/FXO/BluetoothTest/build/intermediates/exploded-aar/com.android.support/appcompat-v7/19.1.0/jars/classes.jar"
+        jumboMode="true"
+        revision="19.1.0"
+        sha1="3499ceba05ca1f6037c6a2fad73df8f636224a28">
+        <dex dex="/Users/Chen/Dropbox/开发/Android/FXO/BluetoothTest/build/intermediates/pre-dexed/debug/com.android.support-appcompat-v7-19.1.0_09e39847139fc50d5b3ffdf9af72f2707c6c5d5f.jar" />
+    </item>
+    <item
+        jar="/Users/Chen/Dropbox/开发/Android/FXO/BluetoothTest/build/intermediates/exploded-aar/com.android.support/support-v4/24.0.0-beta1/jars/classes.jar"
+        jumboMode="true"
+        revision="19.1.0"
+        sha1="f81eecb8d5e9e548f75f277830a94a9b37fbb987">
+        <dex dex="/Users/Chen/Dropbox/开发/Android/FXO/BluetoothTest/build/intermediates/pre-dexed/debug/com.android.support-support-v4-24.0.0-beta1_365e51ba53c1a8c139502db063f676dafaddc2a9.jar" />
+    </item>
+
+</items>

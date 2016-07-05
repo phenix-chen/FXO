@@ -1,4 +1,4 @@
-package com.centerm.fxo.bluetoothtest;
+package com.centerm.fxo.lib;
 
 /**
  * Created by Chen on 4/19/16.

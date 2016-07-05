@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -15,6 +16,8 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +40,35 @@ public class FXOService extends Service {
 
     private int regIndex = 0;
 
+    public MyDatabaseHelper dbHelper;
+
+    public DatabaseContext databaseContext = new DatabaseContext(this);
+
     private Map<String, String> regs = new HashMap<String, String>();
+
+    private String flag = "yes";
+
+    private int Reg_num = 6;
+
+    private String msg2 = "";
+
+    private String[] Reg_address = new String[Reg_num];{
+        Reg_address[0] = "01";
+        Reg_address[1] = "02";
+        Reg_address[2] = "03";
+        Reg_address[3] = "04";
+        Reg_address[4] = "05";
+        Reg_address[5] = "06";
+    }
+
+    private String[] Reg_address2 = new String[Reg_num];{
+        Reg_address2[0] = "01";
+        Reg_address2[1] = "02";
+        Reg_address2[2] = "03";
+        Reg_address2[3] = "04";
+        Reg_address2[4] = "05";
+        Reg_address2[5] = "06";
+    }
 
     private BroadcastReceiver fondReceiver = new BroadcastReceiver() {
         @Override
@@ -68,6 +99,7 @@ public class FXOService extends Service {
         super.onCreate();
         Log.i(TAG, "FXOService is start..!");
         regReceiver();
+        dbHelper = new MyDatabaseHelper(databaseContext, "myDict3.db3",1);
     }
 
     public void setOnReceiveDataListener(OnReceiveDataListener listener) {
@@ -131,6 +163,13 @@ public class FXOService extends Service {
         Log.v(TAG, connectedThread.stringBuffer.toString());
     }
 
+    private void insertData(SQLiteDatabase db, String x
+            , String y, String z, String timeStamp)
+    {
+        // 执行插入语句
+        db.execSQL("insert into dict values(null , ? , ?, ?, ?)"
+                , new String[] {x, y, z, timeStamp});
+    }
 
     public void sendCommand(String command) {
         if (connectedThread != null) {
@@ -276,9 +315,10 @@ public class FXOService extends Service {
                             out.notifyAll();
                         }
                     } else {
-                        //Log.v(TAG,"length" + String.valueOf(stringBuffer.length()) );
+                         //Log.v(TAG,"length" + String.valueOf(stringBuffer.length()) );
+                        //Log.v(TAG, stringBuffer.toString());
                         //readAccRegMsg();
-                        receiveRegMsg2();
+                        receiveRegMsg3(Reg_address);
                     }
 
                 } catch (IOException e) {
@@ -335,40 +375,64 @@ public class FXOService extends Service {
             }
         }
 
-        private void receiveRegMsg2(){
-            String[] reg_add = new String[6];
-            reg_add[0] = "01";
-            reg_add[1] = "02";
-            reg_add[2] = "03";
-            reg_add[3] = "04";
-            reg_add[4] = "05";
-            reg_add[5] = "06";
+        private void receiveRegMsg2(String[] Reg_address){
             check(stringBuffer);
             String msg = getAndDelCompleteMsgFrom2(stringBuffer);
-
             if(msg != null) {
                 synchronized (out){
                     out.notifyAll();
                 }
-                //System.out.println(msg);
-                for(int i =0,j=0;i <= 10; i=i+2){
-                    String val = msg.substring(i, i+2);
-                    //System.out.println(val);
-                    regs.put(reg_add[j], val);
-                    j++;
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
+                msg = msg + df.format(new Date());
+                //if(!msg.equals(msg2)) {e
+                  //  msg2 = msg;
+                    System.out.println(msg);
+                    for (int i = 0, j = 0; i <= Reg_num * 2 - 2; i = i + 2) {
+                        String val = msg.substring(i, i + 2);
+                        //System.out.println(val);
+                        regs.put(Reg_address[j], val);
+                        j++;
+                    }
+                    regs.put("time", msg.substring(12, 40) + msg);
+                    Runnable threadJob = new insert(regs);
+                    Thread myThread = new Thread(threadJob);
+                    myThread.start();
+                    regIndex = (++regIndex) % 3;
+                    //regIndex = 0;
+                    if (regIndex == 0) {
+                        //System.out.println("send");
+                        onReceiveDataListener.onReceiveFXOData(regs);
+                        //Log.v(TAG, msg + "sendToTarget2");
+                    }
+                //}
+            }
+        }
+
+        private void receiveRegMsg3(String[] Reg_address) {
+            check(stringBuffer);
+            String msg = getAndDelCompleteMsgFrom2(stringBuffer);
+            if (msg != null) {
+                synchronized (out) {
+                    out.notifyAll();
                 }
-                //System.out.println(regs.get(reg_add[0]) + regs.get(reg_add[1]) + regs.get(reg_add[2]) + regs.get(reg_add[3])
-                 //+ regs.get(reg_add[4]) + regs.get(reg_add[5]));
-                //regIndex = (++regIndex) % 10;
-                regIndex = 0;
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
+                msg = msg + df.format(new Date());
+                //if(!msg.equals(msg2)) {e
+                //  msg2 = msg;
+                System.out.println(msg);
+                Runnable threadJob = new insert2(msg);
+                Thread myThread = new Thread(threadJob);
+                myThread.start();
+                regIndex = (++regIndex) % 3;
+                //regIndex = 0;
                 if (regIndex == 0) {
                     //System.out.println("send");
                     onReceiveDataListener.onReceiveFXOData(regs);
                     //Log.v(TAG, msg + "sendToTarget2");
                 }
+                //}
             }
         }
-
         private boolean isResultMsg() {
             return stringBuffer.toString().contains("=");
         }
@@ -426,16 +490,17 @@ public class FXOService extends Service {
 
         private String getAndDelCompleteMsgFrom2(StringBuffer stringBuffer) {
             String msg = null;
-            //System.out.println("lean" + String.valueOf(stringBuffer.length()));
+            System.out.println("lean" + String.valueOf(stringBuffer.length()));
             //String msg2 = null;
             if (stringBuffer.length() >= 13) {
                 msg = stringBuffer.substring(1, 13);
                 stringBuffer.delete(0, 13);
                 //msg2 = stringBuffer.substring(0,stringBuffer.length());
                 // Log.v(TAG,msg2);
-
             }
-            return msg;
+
+                return msg;
+
         }
 
         private String readStr() throws IOException {
@@ -446,27 +511,217 @@ public class FXOService extends Service {
             //Log.v(TAG, "receiver: "+ receive);
             return receive;
         }
+    }
 
-        private String readStr2() throws IOException {
-            String receive;
-            byte[] buffer = new byte[1024];
-            String result="";
-            int bytes = in.read(buffer);
-            for(int i = 0;i < bytes; i++)
-            {
-                String temp = Integer.toHexString(buffer[i] & 0xff);
-                result = result + temp;
+    public class insert implements Runnable{
+        String x, y, z, time;
+        String x_m, x_l, y_m, y_l, z_m, z_l;
+        Map<String, String> data;
+        public insert(Map<String, String > data) {
+            time = data.get("time");
+            x_m = data.get(RegClass.OUT_X_MSB);
+            x_l = data.get(RegClass.OUT_X_LSB);
+            y_m = data.get(RegClass.OUT_Y_MSB);
+            y_l = data.get(RegClass.OUT_Y_LSB);
+            z_m = data.get(RegClass.OUT_Z_MSB);
+            z_l = data.get(RegClass.OUT_Z_LSB);
+        }    @Override
+
+        public void run() {
+            /*System.out.println(regs.get(reg_add[0]) + regs.get(reg_add[1]) + regs.get(reg_add[2]) + regs.get(reg_add[3])
+                 + regs.get(reg_add[4]) + regs.get(reg_add[5]));*/
+
+            if(time != flag) {
+                flag = time;
+                x = c(combineValue(x_m, x_l));
+                y = c(combineValue(y_m, y_l));
+                z = c(combineValue(z_m, z_l));
+
+            /*while (flag == "no"){
+                try{
+                    Thread.sleep(1);
+                }catch (InterruptedException ex){
+                    ex.printStackTrace();
+                }
+            }*/
+                //flag = "no";
+                insertData(dbHelper.getReadableDatabase(), x, y, z, time);
             }
-            receive = new String(buffer, 0, bytes);
-            //Log.v(TAG, "receiver: "+ receive);
-            return receive;
+
+            //flag = "yes";
+        }
+        private String combineValue(String MSB, String LSB){
+            String Value = MSB + LSB;
+            return Value;
+        }
+        //加速度进制转换
+        public String c(String value){
+            int input;
+            input=Integer.parseInt(value,16);
+
+            // Determine sign
+            int num;
+            String output;
+            num=input;
+            if (num<0x7FFF)
+            {
+                output="+";
+            }
+            else
+            {
+                output="-";
+                num = ~num + 1;
+                num &= 0xFFFC;
+            }
+
+            //Output integer
+            int integer_=num>>12;
+            output= output +String.valueOf(integer_)+".";
+
+            //Output Decimal
+            int decimal=num>>2;
+            decimal &= 0x3FF;
+            int[] m;
+            m=new int[11]; //定义小数
+            m[0]=0;
+            m[1]=5000;
+            m[2]=2500;
+            m[3]=1250;
+            m[4]=625;
+            m[5]=313;
+            m[6]=156;
+            m[7]=78;
+            m[8]=39;
+            m[9]=20;
+            m[10]=10;
+            int result = 0;
+            int bit = 512;// 10 0000 0000
+            for(int i=1;i<11;i=i+1)
+            {
+                if((decimal & bit)>0)
+                    result = result + m[i];
+                bit = bit / 2;
+            }
+            //确保小数有四位
+            if (result <100 )
+                output = output + "00" + String.valueOf(result);
+            else if (result < 1000)
+                output = output + "0" + String.valueOf(result);
+            else output = output + String.valueOf(result);
+            return output;
         }
 
-        // 单字符char转两位十六进制
-        private String charToInt(String char_){
-            String Hex="0";
-            return Hex;
+
+    }
+
+    public class insert2 implements Runnable{
+        String msg;
+        String x, y, z, time;
+        String x_m, x_l, y_m, y_l, z_m, z_l;
+        public insert2(String msg) {
+            this.msg = msg;
+        }    @Override
+
+        public void run() {
+            /*System.out.println(regs.get(reg_add[0]) + regs.get(reg_add[1]) + regs.get(reg_add[2]) + regs.get(reg_add[3])
+                 + regs.get(reg_add[4]) + regs.get(reg_add[5]));*/
+            for (int i = 0, j = 0; i <= Reg_num * 2 - 2; i = i + 2) {
+                String val = msg.substring(i, i + 2);
+                //System.out.println(val);
+                Reg_address2[j] = val;
+                regs.put(Reg_address[j], val);
+                j++;
+            }
+            regs.put("time", msg.substring(12, 40) + "  " + msg);
+
+            time = msg.substring(12, 40) + "  " + msg;
+            x_m = Reg_address2[0];
+            x_l = Reg_address2[1];
+            y_m = Reg_address2[2];
+            y_l = Reg_address2[3];
+            z_m = Reg_address2[4];
+            z_l = Reg_address2[5];
+            if(time != flag) {
+                flag = time;
+                x = c(combineValue(x_m, x_l));
+                y = c(combineValue(y_m, y_l));
+                z = c(combineValue(z_m, z_l));
+
+            /*while (flag == "no"){
+                try{
+                    Thread.sleep(1);
+                }catch (InterruptedException ex){
+                    ex.printStackTrace();
+                }
+            }*/
+                //flag = "no";
+                insertData(dbHelper.getReadableDatabase(), x, y, z, time);
+            }
+
+            //flag = "yes";
         }
+        private String combineValue(String MSB, String LSB){
+            String Value = MSB + LSB;
+            return Value;
+        }
+        //加速度进制转换
+        public String c(String value){
+            int input;
+            input=Integer.parseInt(value,16);
+
+            // Determine sign
+            int num;
+            String output;
+            num=input;
+            if (num<0x7FFF)
+            {
+                output="+";
+            }
+            else
+            {
+                output="-";
+                num = ~num + 1;
+                num &= 0xFFFC;
+            }
+
+            //Output integer
+            int integer_=num>>12;
+            output= output +String.valueOf(integer_)+".";
+
+            //Output Decimal
+            int decimal=num>>2;
+            decimal &= 0x3FF;
+            int[] m;
+            m=new int[11]; //定义小数
+            m[0]=0;
+            m[1]=5000;
+            m[2]=2500;
+            m[3]=1250;
+            m[4]=625;
+            m[5]=313;
+            m[6]=156;
+            m[7]=78;
+            m[8]=39;
+            m[9]=20;
+            m[10]=10;
+            int result = 0;
+            int bit = 512;// 10 0000 0000
+            for(int i=1;i<11;i=i+1)
+            {
+                if((decimal & bit)>0)
+                    result = result + m[i];
+                bit = bit / 2;
+            }
+            //确保小数有四位
+            if (result <100 )
+                output = output + "00" + String.valueOf(result);
+            else if (result < 1000)
+                output = output + "0" + String.valueOf(result);
+            else output = output + String.valueOf(result);
+            return output;
+        }
+
+
     }
 
     public class FXOServiceBinder extends Binder {
